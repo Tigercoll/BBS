@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<form action="/upload/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="img_head">
+    <input type="submit" value="提交">
+</form>
+
+
+
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="jquery-3.2.1.min.js"></script>
+</body>
+</html>
