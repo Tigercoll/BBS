@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+</head>
+<body>
+
+<h1>index
+    {{ user.username }}
+
+</h1>
+{% if user.is_authenticated %}
+    {{ user.username }}
+{% else %}
+    <a href="/login/">登录</a>
+{% endif %}
+<a href="/logout/">注销</a>
+</body>
+</html>

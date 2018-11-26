@@ -120,3 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# 静态文件存放目录
+STATICFILES_DIRS =[os.path.join(BASE_DIR,'static')]
+
+# 告诉django项目用哪张表做认证
+AUTH_USER_MODEL = 'bbs_blog.UserInfo'

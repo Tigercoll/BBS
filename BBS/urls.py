@@ -20,4 +20,7 @@ from bbs_blog.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('upload/',UpLoad.as_view()),
+    path('login/',LoginView.as_view(),name='login'),
+    path('index/',IndexView.as_view(),name='index'),
+    path('logout/',LogoutView.as_view(),name='logout'),
 ]
