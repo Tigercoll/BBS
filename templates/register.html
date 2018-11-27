@@ -158,7 +158,7 @@
         formData.append("re_password",$("#re_password").val());
         formData.append("header_img",$("#header_img")[0].files[0]);
         formData.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
-        
+
         console.log(formData);
         $.ajax({
             url:'{% url "register" %}',

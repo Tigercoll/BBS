@@ -10,8 +10,10 @@ class UserInfo(AbstractUser):
     """用户表"""
     nid = models.AutoField(primary_key=True)
     avatar = models.ImageField(upload_to="static/avatars/", default="static/avatars/default.png", verbose_name="头像")
+    phone = models.CharField(max_length=13,verbose_name='手机号',default='')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     blog = models.OneToOneField(to='BlogIndex',to_field='nid',on_delete=models.CASCADE,verbose_name='个人博客',blank=True,null=True)
+    nick_name = models.CharField(max_length=64,verbose_name='显示名,昵称',default='')
 
     def __str__(self):
         return self.username

@@ -38,9 +38,17 @@ class RegisterView(View):
         return render(request,'register.html')
 
     def post(self,request):
-        email = request.POST.get("formData")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        login_name = request.POST.get("login_name")
+        nick_name = request.POST.get("nick_name")
+        password = request.POST.get("password")
+        re_password = request.POST.get("re_password")
+        header_img = request.FILES.get("header_img")
+        print(email,phone,login_name,nick_name,password,re_password,header_img)
 
-        print(email)
+
+
 
         return HttpResponse("ok")
 
