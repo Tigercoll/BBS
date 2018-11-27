@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 
 # Create your views here.
-
+from bbs_blog import forms
 from django.views import View
 
 from django.contrib import auth
@@ -30,6 +30,26 @@ class LogoutView(View):
 class IndexView(View):
     def get(self,request):
         return render(request,'index.html')
+
+
+
+class RegisterView(View):
+    def get(self,request):
+        form_obj = forms.RegisterForm()
+        return render(request,'register.html',context={'form_obj':form_obj})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
