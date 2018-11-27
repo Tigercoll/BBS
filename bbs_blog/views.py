@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect
-
+from django.http import JsonResponse
 # Create your views here.
 from bbs_blog import forms
 from django.views import View
@@ -35,8 +35,14 @@ class IndexView(View):
 
 class RegisterView(View):
     def get(self,request):
-        form_obj = forms.RegisterForm()
-        return render(request,'register.html',context={'form_obj':form_obj})
+        return render(request,'register.html')
+
+    def post(self,request):
+        email = request.POST.get("formData")
+
+        print(email)
+
+        return HttpResponse("ok")
 
 
 
