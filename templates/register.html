@@ -167,8 +167,16 @@
             processData:false,
             contentType:false,
             success:function (callback) {
+               if(callback.status){
+                    $.each(callback.error,function (k,v) {
+                        console.log(k);
+                        console.log(v);
+                    })
+               }
 
             }
+
+
         })
 
 
