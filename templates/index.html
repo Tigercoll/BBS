@@ -16,6 +16,8 @@
 </h1>
 {% if user.is_authenticated %}
     {{ user.username }}
+    <img src="/{{ user.avatar }}" alt="">
+{#    <img src="" alt="">#}
 {% else %}
     <a href="/login/">登录</a>
 {% endif %}

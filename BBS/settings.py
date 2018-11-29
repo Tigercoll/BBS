@@ -126,3 +126,6 @@ STATICFILES_DIRS =[os.path.join(BASE_DIR,'static')]
 
 # 告诉django项目用哪张表做认证
 AUTH_USER_MODEL = 'bbs_blog.UserInfo'
+
+# 在浏览器关闭后失效
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True

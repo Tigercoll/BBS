@@ -1,24 +1,60 @@
 from django.shortcuts import render,HttpResponse,redirect
 from django.http import JsonResponse
 # Create your views here.
+from geetest import GeetestLib
+
 from bbs_blog import forms
 from django.views import View
+from bbs_blog.models import UserInfo
 
+from django.conf import settings
+
+import datetime
 import  re
 from django.contrib import auth
+
+pc_geetest_id = "b46d1900d0a894591916ea94ea91bd2c"
+pc_geetest_key = "36fc3fe98530eea08dfc6ce76e3d24c4"
+
 class LoginView(View):
     def get(self,request):
-        return render(request,'login.html')
+        return render(request,'login2.html')
 
     def post(self,request):
+        data = {'stutas':0,'error':{}}
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = auth.authenticate(username=username,password=password)
-        if user:
-            auth.login(request,user)
-            return redirect('/index/')
+        remember =request.POST.get('remember')
+        gt = GeetestLib(pc_geetest_id, pc_geetest_key)
+        challenge = request.POST.get(gt.FN_CHALLENGE, '')
+        validate = request.POST.get(gt.FN_VALIDATE, '')
+        seccode = request.POST.get(gt.FN_SECCODE, '')
+        status = request.session[gt.GT_STATUS_SESSION_KEY]
+        user_id = request.session["user_id"]
+        print(username)
+        if status:
+            result = gt.success_validate(challenge, validate, seccode, user_id)
         else:
-            return render(request,'login.html',context={'msg':'用户名或密码错误'})
+            result = gt.failback_validate(challenge, validate, seccode)
+        if result:
+            user = auth.authenticate(username=username,password=password)
+            if user:
+                if remember:
+                    aweek = 60*60*12*7
+                    request.session.set_expiry(aweek)
+                else:
+                    request.session.set_expiry(0)
+                auth.login(request,user)
+                data['url'] = '/index/'
+                return JsonResponse(data)
+            else:
+                data['status']=1
+                data['error'] = '用户名或密码错误'
+                return JsonResponse(data)
+        else:
+            data['status'] = 1
+            data['error'] = '验证码错误'
+            return JsonResponse(data)
 
 class LogoutView(View):
     def get(self,request):
@@ -26,6 +62,16 @@ class LogoutView(View):
         return redirect('/login/')
 
 
+
+
+def get_geetest(request):
+    user_id = 'test'
+    gt = GeetestLib(pc_geetest_id, pc_geetest_key)
+    status = gt.pre_process(user_id)
+    request.session[gt.GT_STATUS_SESSION_KEY] = status
+    request.session["user_id"] = user_id
+    response_str = gt.get_response_str()
+    return HttpResponse(response_str)
 
 
 class IndexView(View):
@@ -39,7 +85,7 @@ class RegisterView(View):
         return render(request,'register.html')
 
     def post(self,request):
-        data = {'status':'','error':{}}
+        data = {'status':0,'error':{}}
         email = request.POST.get("email")
         phone = request.POST.get("phone")
         login_name = request.POST.get("login_name")
@@ -54,6 +100,11 @@ class RegisterView(View):
             if '@' not  in email:
                 data['status'] = 1
                 data['error']['email_error'] = '邮箱格式不正确'
+            else:
+                email_obj=UserInfo.objects.filter(email=email)
+                if  email_obj:
+                    data['status'] = 1
+                    data['error']['email_error'] = '邮箱已被注册'
         else:
             data['status'] = 1
             data['error']['email_error'] = '邮箱不能为空'
@@ -65,15 +116,25 @@ class RegisterView(View):
             if not searchObj:
                 data['status'] = 1
                 data['error']['phone_error'] = '手机格式不正确'
+            else:
+                phone_obj =UserInfo.objects.filter(phone=phone)
+                if  phone_obj:
+                    data['status'] = 1
+                    data['error']['phone_error'] = '手机号已被注册'
         else:
             data['status'] = 1
             data['error']['phone_error'] = '手机不能为空'
 
         # 判断登录名
         if login_name:
-            if len(login_name)<6:
+            if len(login_name)<4:
                 data['status'] = 1
-                data['error']['login_name_error'] = '登录名不能少于6位'
+                data['error']['login_name_error'] = '登录名不能少于4位'
+            else:
+                login_name_obj = UserInfo.objects.filter(username=login_name)
+                if login_name_obj:
+                    data['status'] = 1
+                    data['error']['login_name_error'] = '登录名已被注册'
         else:
             data['status'] = 1
             data['error']['login_name_error'] = '登录名不能为空'
@@ -85,22 +146,27 @@ class RegisterView(View):
                 data['error']['nick_name_error'] = '昵称不能少于2位'
         else:
             data['status'] = 1
-            data['error']['login_name_error'] = '昵称不能为空'
+            data['error']['nick_name_error'] = '昵称不能为空'
 
         if password:
             if len(password)<8:
                 data['status'] = 1
-                data['error']['password_error'] = '密码不能少于2位'
+                data['error']['password_error'] = '密码不能少于8位'
         else:
             data['status'] = 1
             data['error']['password_error'] = '密码不能为空'
 
         if password != re_password:
             data['status'] = 1
-            data['error']['password_error'] = '两次密码不一致'
+            data['error']['re_password_error'] = '两次密码不一致'
 
-        print(data)
-        import json
+        if data['status'] ==0:
+            try:
+                UserInfo.objects.create_user(username=login_name,password=password,email=email,phone=phone,nick_name=nick_name,avatar=header_img)
+                data['url'] = '/login/'
+            except Exception as e:
+                data['status'] = 2
+                data['error']['unknown'] ='%s'%e
         return JsonResponse(data)
 
 

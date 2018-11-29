@@ -24,4 +24,6 @@ urlpatterns = [
     path('index/',IndexView.as_view(),name='index'),
     path('logout/',LogoutView.as_view(),name='logout'),
     path('register/',RegisterView.as_view(),name='register'),
+
+    path('pc-geetest/register/',get_geetest),
 ]
