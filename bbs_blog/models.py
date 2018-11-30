@@ -80,8 +80,8 @@ class Article(models.Model):
     title = models.CharField(max_length=64,verbose_name='文章的标题')
     desc = models.CharField(max_length=128,verbose_name='文章简介')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
-    comment_count = models.IntegerField(verbose_name='评论数')
-    favour_count =models.IntegerField(verbose_name='点赞数')
+    comment_count = models.IntegerField(verbose_name='评论数',default=0)
+    favour_count =models.IntegerField(verbose_name='点赞数',default=0)
     author = models.ForeignKey(to='UserInfo',to_field='nid',on_delete=models.CASCADE,verbose_name='作者')
     tag = models.ManyToManyField(to=Tag,
         through="Article2Tag",

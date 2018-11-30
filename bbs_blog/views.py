@@ -5,7 +5,7 @@ from geetest import GeetestLib
 
 from bbs_blog import forms
 from django.views import View
-from bbs_blog.models import UserInfo
+from bbs_blog.models import UserInfo,Article
 
 from django.conf import settings
 
@@ -76,7 +76,8 @@ def get_geetest(request):
 
 class IndexView(View):
     def get(self,request):
-        return render(request,'index.html')
+        article_list=Article.objects.all()
+        return render(request,'index.html',{'article_list':article_list})
 
 
 
