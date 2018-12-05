@@ -16,15 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from bbs_blog.views import *
-from django.urls import include
-import bbs_blog.urls
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('upload/',UpLoad.as_view()),
-    path('login/',LoginView.as_view(),name='login'),
-    path('index/',IndexView.as_view(),name='index'),
-    path('logout/',LogoutView.as_view(),name='logout'),
-    path('register/',RegisterView.as_view(),name='register'),
-    path('blog/',include(bbs_blog.urls)),
-    path('pc-geetest/register/',get_geetest),
+    path('<username>/',HomeView.as_view()),
 ]

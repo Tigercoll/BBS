@@ -8,6 +8,7 @@ from django.contrib.auth.models import AbstractUser
 
 class UserInfo(AbstractUser):
     """用户表"""
+
     nid = models.AutoField(primary_key=True)
     avatar = models.ImageField(upload_to="static/avatars/", default="static/avatars/default.png", verbose_name="头像")
     phone = models.CharField(max_length=13,verbose_name='手机号',default='')
@@ -65,11 +66,6 @@ class Tag(models.Model):
         verbose_name = "标签"
         verbose_name_plural = verbose_name
 
-class Article2Tag(models.Model):
-    """文章和标签的多对多关系表"""
-    nid = models.AutoField(primary_key=True)
-    article = models.ForeignKey(to="Article", to_field="nid",on_delete=models.CASCADE)
-    tag = models.ForeignKey(to="Tag", to_field="nid",on_delete=models.CASCADE)
 
 
 class Article(models.Model):
@@ -83,9 +79,7 @@ class Article(models.Model):
     comment_count = models.IntegerField(verbose_name='评论数',default=0)
     favour_count =models.IntegerField(verbose_name='点赞数',default=0)
     author = models.ForeignKey(to='UserInfo',to_field='nid',on_delete=models.CASCADE,verbose_name='作者')
-    tag = models.ManyToManyField(to=Tag,
-        through="Article2Tag",
-        through_fields=("article", "tag"),verbose_name='文章标签')
+    tag = models.ManyToManyField(to=Tag,verbose_name='文章标签')
     category = models.ForeignKey(to=Category,on_delete=models.CASCADE,verbose_name='文章分类')
 
 
@@ -97,7 +91,7 @@ class Article(models.Model):
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = verbose_name
-
+        ordering=['-create_time']
 
 class ArticleDetail(models.Model):
     """
