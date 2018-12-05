@@ -193,11 +193,15 @@ class HomeView(View):
         category_list = article_list.values('category__name').annotate(
             count=Count('category__name')).values('category__name', 'count')
         tag_list = article_list.values('tag__name').annotate( count=Count('tag__name')).values('tag__name', 'count')
-        archive_list = article_list.extra(
-            select={"archive_ym": "date()"}
-        )
-
+        archive_list = []
+        archive = article_list.dates('create_time','month',order='DESC')
+        for i in archive:
+            archive_count=article_list.filter(create_time__year=i.year,create_time__month=i.month).count()
+            archive_list.append([i,archive_count])
         print(archive_list)
+
+
+
         return render(
             request,
             'home.html',
