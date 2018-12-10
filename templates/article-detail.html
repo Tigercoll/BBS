@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block article_list %}
+    <link rel="stylesheet" href="/static/detailcss.css">
+<div class="article-list">
+{{ detail.articledetail.content | safe }}
+
+</div>
+
+<div class="praise">
+	<span id="praise">
+         {% if is_up %}
+             <img src="/static/img/yizan.png" id="praise-img" class="animation">
+                   {% else %}
+              <img src="/static/img/zan.png" id="praise-img" class="animation">
+         {% endif %}
+
+    </span>
+	<span id="praise-txt" >{{ detail.favour_count }}</span>
+	<span id="add-num" ><em class="add-animation">-1</em></span>
+</div>
+
+
+    <script>
+
+	/* @author:Romey
+	 * 动态点赞
+	 * 此效果包含css3，部分浏览器不兼容（如：IE10以下的版本）
+	*/
+	$(function(){
+		$("#praise").click(function() {
+            var praise_img = $("#praise-img");
+            var text_box = $("#add-num");
+            var praise_txt = $("#praise-txt");
+            var num = parseInt(praise_txt.text());
+            var user ="{{ request.user.username }}";
+                if(user){
+                    $.ajax(
+                        {
+                            url:'/blog/up_favour/',
+                            type:'get',
+                            data:{
+                                login_user:user,
+                                article_id:'{{ detail.pk }}'
+                            },
+                            success:function (callback) {
+                               if (callback.status===1){
+                                   alert(callback.msg)
+                               }else if (callback.status===2){
+                                   $(praise_img).attr('src','/static/img/zan.png');
+                                   praise_txt.removeClass("hover");
+                                   text_box.show().html("<em class='add-animation'>-1</em>");
+                                   $(".add-animation").removeClass("hover");
+                                   num -=1;
+                                   praise_txt.text(num)
+                               }
+                               else {
+                                    $(praise_img).attr('src','/static/img/yizan.png');
+                                   praise_txt.addClass("hover");
+                                   text_box.show().html("<em class='add-animation'>+1</em>");
+                                   $(".add-animation").addClass("hover");
+                                   num +=1;
+                                   praise_txt.text(num)
+                               }
+                            }
+
+
+
+                        }
+                    )
+
+                }
+                else {
+                    alert('请先登录')
+                }
+
+
+
+
+
+		})
+	});
+
+
+
+
+</script>
+{% endblock %}

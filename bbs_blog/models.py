@@ -101,6 +101,7 @@ class ArticleDetail(models.Model):
     content = models.TextField(verbose_name='文章内容')
     article = models.OneToOneField(to="Article", to_field="nid",on_delete=models.CASCADE)
 
+
     class Meta:
         verbose_name = "文章详情"
         verbose_name_plural = verbose_name

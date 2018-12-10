@@ -19,5 +19,8 @@ from bbs_blog.views import *
 
 
 urlpatterns = [
+    path('up_favour/',UpFavourView.as_view()),
+    path('<username>/article/<article_id>/',ArticleDetailView.as_view()),
     path('<username>/',HomeView.as_view()),
+
 ]

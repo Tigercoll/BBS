@@ -1,101 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% if user.nick_name %}
-        {{ user.nick_name }}
-    {% else %}
-        {{ user.username }}
-    {% endif %}的博客</title>
-    <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/mystyle.css">
-    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
-
-</head>
-<body>
-{#导航条开始#}
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-
-            <a class="navbar-brand" href={% url  "index" %}>
-                {% if user.nick_name %}
-                    {{ user.nick_name }}
-                {% else %}
-                    {{ user.username }}
-                {% endif %}
-                的博客</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse pull-right">
-            <ul class="nav navbar-nav">
-                <li class=""><a href={% url  "index" %}><i class="fa fa-home"></i> 首页</a>
-                    {% if request.user.username %}
-                        <li><a href="#">{{ request.user.username }}</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">个人中心<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="/logout/">注销</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li><a href={% url 'login' %}><i class="fa fa-user"></i> 登录</a></li>
-                        <li><a href={% url 'register' %}><i class="fa fa-user-plus"></i> 注册</a></li>
-                    {% endif %}
-
-                <li><a href="#"><i class="fa fa-question-circle-o"></i> 帮助</a></li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
-{#导航条结束#}
-<!-- 主页面 开始-->
-<div class="container article-content">
-    <div class="row ">
-        <div class="col-md-3">
-            <div class="panel panel-primary">
-                <div class="panel-heading">博客分类</div>
-                <div class="panel-body">
-                    {% for category in category_list %}
-                        <div><a> {{ category.category__name }}({{ category.count }})</a></div>
-                    {% endfor %}
-
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">博客标签</div>
-                <div class="panel-body">
-                    {% for tag in tag_list %}
-                        <div><a> {{ tag.tag__name }}({{ tag.count }})</a></div>
-                    {% endfor %}
-                </div>
-            </div>
-        <div class="panel panel-danger">
-                <div class="panel-heading">博客归档</div>
-                <div class="panel-body">
-                    {% for archive in archive_list %}
-                        <div><a href="/blog/xiaohei/{{ archive.0.year  }}/{{ archive.0.month }}/">{{ archive.0.year }}年{{ archive.0.month }}月（{{ archive.1 }}）<a></div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <!-- 文章列表 开始 -->
-            <!-- 文章列表 开始 -->
-            <div class="article-list">
-                {% for article in article_list %}
+{% extends 'base.html' %}
+{% block article_list %}
+<!-- 文章列表 开始 -->
+<div class="article-list">
+    {% for article in article_list %}
                     <div class="article">
-                        <h3><a href="">{{ article.title }}</a></h3>
+                        <h3><a href="/blog/{{ article.author.username }}/article/{{ article.pk }}">{{ article.title }}</a></h3>
                         <div class="media">
                             <div class="media-left">
-                                <a href="#">
+                                <a href="/blog/{{ article.author.username }}/">
                                     <img class="media-object author-img" src="/{{ article.author.avatar }}" alt="...">
                                 </a>
                             </div>
@@ -104,7 +16,7 @@
                             </div>
                         </div>
                         <div class="article-footer">
-                            <span><a href="">
+                            <span><a href="/blog/{{ article.author.username }}/">
                                 {% if user.nick_name %}
                                     {{ user.nick_name }}
                                 {% else %}
@@ -113,24 +25,12 @@
                             </a></span>发布于
                             <span>{{ article.create_time|date:'Y-m-d H:i:s' }}</span>
                             <span class="glyphicon glyphicon-comment"> 评论({{ article.comment_count }})</span>
-                            <span class="glyphicon glyphicon-thumbs-up"> 点赞({{ article.up_count }})</span>
+                            <span class="glyphicon glyphicon-thumbs-up"> 点赞({{ article.favour_count }})</span>
                         </div>
                     </div>
                     <hr>
                 {% endfor %}
 
             </div>
-            <!-- 文章列表 结束-->
-
-            <!-- 文章列表 结束-->
-
-        </div>
-
-    </div>
-</div>
-<!-- 主页面 结束-->
-<script type="text/javascript" src="/static/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/static/setupajax.js"></script>
-</body>
-</html>
+<!-- 文章列表 结束-->
+{% endblock %}

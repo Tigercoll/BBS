@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="db">
-  <database-model serializer="dbm" rdbms="SQLITE" format-version="4.4">
+  <database-model serializer="dbm" rdbms="SQLITE" format-version="4.7">
     <root id="1"/>
     <schema id="2" parent="1" name="main">
       <Current>1</Current>
@@ -46,7 +46,6 @@
     <index id="28" parent="6" name="sqlite_autoindex_auth_group_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>name</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="29" parent="6">
@@ -75,17 +74,13 @@
     <index id="34" parent="7" name="auth_group_permissions_group_id_permission_id_0cd325b0_uniq">
       <ColNames>group_id
 permission_id</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="35" parent="7" name="auth_group_permissions_group_id_b120cbf9">
       <ColNames>group_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="36" parent="7" name="auth_group_permissions_permission_id_84c5c92e">
       <ColNames>permission_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="37" parent="7">
       <ColNames>id</ColNames>
@@ -128,13 +123,10 @@ permission_id</ColNames>
     <index id="44" parent="8" name="auth_permission_content_type_id_codename_01ab375a_uniq">
       <ColNames>content_type_id
 codename</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="45" parent="8" name="auth_permission_content_type_id_2f476e4b">
       <ColNames>content_type_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="46" parent="8">
       <ColNames>id</ColNames>
@@ -189,11 +181,9 @@ codename</ColNames>
     </column>
     <index id="56" parent="9" name="bbs_blog_article_author_id_be7abdcc">
       <ColNames>author_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="57" parent="9" name="bbs_blog_article_category_id_b2ad28b8">
       <ColNames>category_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="58" parent="9">
       <ColNames>nid</ColNames>
@@ -231,17 +221,13 @@ codename</ColNames>
     <index id="64" parent="10" name="bbs_blog_article_tag_article_id_tag_id_95c24a02_uniq">
       <ColNames>article_id
 tag_id</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="65" parent="10" name="bbs_blog_article_tag_article_id_dc06e945">
       <ColNames>article_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="66" parent="10" name="bbs_blog_article_tag_tag_id_05c284f0">
       <ColNames>tag_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="67" parent="10">
       <ColNames>id</ColNames>
@@ -279,7 +265,6 @@ tag_id</ColNames>
     <index id="73" parent="11" name="sqlite_autoindex_bbs_blog_articledetail_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>article_id</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="74" parent="11">
@@ -320,17 +305,13 @@ tag_id</ColNames>
     <index id="81" parent="12" name="bbs_blog_articlefavour_article_id_user_id_c8f5907f_uniq">
       <ColNames>article_id
 user_id</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="82" parent="12" name="bbs_blog_articlefavour_article_id_2172ab9c">
       <ColNames>article_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="83" parent="12" name="bbs_blog_articlefavour_user_id_79104bb2">
       <ColNames>user_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="84" parent="12">
       <ColNames>nid</ColNames>
@@ -368,7 +349,6 @@ user_id</ColNames>
     <index id="90" parent="13" name="sqlite_autoindex_bbs_blog_blogindex_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>site</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="91" parent="13">
@@ -425,15 +405,12 @@ user_id</ColNames>
     </column>
     <index id="102" parent="15" name="bbs_blog_comment_article_id_bcd205bc">
       <ColNames>article_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="103" parent="15" name="bbs_blog_comment_comment_user_id_fcfe244d">
       <ColNames>comment_user_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="104" parent="15" name="bbs_blog_comment_parent_comment_id_549b2388">
       <ColNames>parent_comment_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="105" parent="15">
       <ColNames>nid</ColNames>
@@ -555,13 +532,11 @@ user_id</ColNames>
     <index id="128" parent="17" name="sqlite_autoindex_bbs_blog_userinfo_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>username</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="129" parent="17" name="sqlite_autoindex_bbs_blog_userinfo_2">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>blog_id</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="130" parent="17">
@@ -601,17 +576,13 @@ user_id</ColNames>
     <index id="137" parent="18" name="bbs_blog_userinfo_groups_userinfo_id_group_id_b8164fde_uniq">
       <ColNames>userinfo_id
 group_id</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="138" parent="18" name="bbs_blog_userinfo_groups_userinfo_id_a4ac8c16">
       <ColNames>userinfo_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="139" parent="18" name="bbs_blog_userinfo_groups_group_id_0d4bf473">
       <ColNames>group_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="140" parent="18">
       <ColNames>id</ColNames>
@@ -649,17 +620,13 @@ group_id</ColNames>
     <index id="146" parent="19" name="bbs_blog_userinfo_user_permissions_userinfo_id_permission_id_8e88dddb_uniq">
       <ColNames>userinfo_id
 permission_id</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="147" parent="19" name="bbs_blog_userinfo_user_permissions_userinfo_id_fc557369">
       <ColNames>userinfo_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="148" parent="19" name="bbs_blog_userinfo_user_permissions_permission_id_0c43d865">
       <ColNames>permission_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="149" parent="19">
       <ColNames>id</ColNames>
@@ -719,11 +686,9 @@ permission_id</ColNames>
     </column>
     <index id="160" parent="20" name="django_admin_log_content_type_id_c4bce8eb">
       <ColNames>content_type_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <index id="161" parent="20" name="django_admin_log_user_id_c564eba6">
       <ColNames>user_id</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="162" parent="20">
       <ColNames>id</ColNames>
@@ -761,8 +726,6 @@ permission_id</ColNames>
     <index id="168" parent="21" name="django_content_type_app_label_model_76bd3d3b_uniq">
       <ColNames>app_label
 model</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="169" parent="21">
@@ -810,12 +773,10 @@ model</ColNames>
     <index id="178" parent="23" name="sqlite_autoindex_django_session_1">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>session_key</ColNames>
-      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <index id="179" parent="23" name="django_session_expire_date_a5c62663">
       <ColNames>expire_date</ColNames>
-      <ColumnCollations></ColumnCollations>
     </index>
     <key id="180" parent="23">
       <ColNames>session_key</ColNames>

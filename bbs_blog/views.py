@@ -5,7 +5,7 @@ from geetest import GeetestLib
 from django.db.models import Count
 from bbs_blog import forms
 from django.views import View
-from bbs_blog.models import UserInfo, Article
+from bbs_blog.models import UserInfo, Article,ArticleFavour
 
 from django.conf import settings
 
@@ -13,6 +13,7 @@ import datetime
 import re
 from django.contrib import auth
 
+from django.db.models import F
 pc_geetest_id = "b46d1900d0a894591916ea94ea91bd2c"
 pc_geetest_key = "36fc3fe98530eea08dfc6ce76e3d24c4"
 
@@ -190,26 +191,53 @@ class HomeView(View):
         if not user:
             return HttpResponse('ok')
         article_list = Article.objects.filter(author=user)
-        category_list = article_list.values('category__name').annotate(
-            count=Count('category__name')).values('category__name', 'count')
-        tag_list = article_list.values('tag__name').annotate( count=Count('tag__name')).values('tag__name', 'count')
-        archive_list = []
-        archive = article_list.dates('create_time','month',order='DESC')
-        for i in archive:
-            archive_count=article_list.filter(create_time__year=i.year,create_time__month=i.month).count()
-            archive_list.append([i,archive_count])
-        print(archive_list)
-
-
-
         return render(
             request,
             'home.html',
             {
                 'article_list': article_list,
                 'user': user,
-                'category_list': category_list,
-                'tag_list':tag_list,
-                'archive_list':archive_list
             }
         )
+
+
+class ArticleDetailView(View):
+    def get(self,request,username,article_id):
+        print(username,article_id)
+        user = UserInfo.objects.filter(username=username).first()
+        if not user:
+            return HttpResponse("404")
+        is_up = False
+        detail = Article.objects.filter(author=user,pk=int(article_id)).first()
+        if  request.user.is_authenticated:
+            print(1)
+            is_up = ArticleFavour.objects.filter(article=detail, user=request.user).values('is_up').first()
+            print(is_up)
+        return render(request,'article-detail.html',context={'user':user,'detail':detail,'is_up':is_up})
+
+
+
+class UpFavourView(View):
+    def get(self,request):
+        data = {'status':''}
+        login_user = request.GET.get('login_user')
+        user = UserInfo.objects.filter(username =login_user).first()
+
+        if not user:
+            data['status'] = 1
+            data['msg'] = '请先登录'
+        article_id = request.GET.get('article_id')
+
+        up_favour = ArticleFavour.objects.filter(user=user,article_id=article_id).values('is_up').first()
+        if up_favour:
+            data['status']=2
+            data['msg'] = '取消点赞'
+            ArticleFavour.objects.filter(user=user, article_id=article_id).first().delete()
+            Article.objects.filter(pk=article_id).update(favour_count=F("favour_count") - 1)
+
+        else:
+            ArticleFavour.objects.create(user=user,article_id=article_id)
+            Article.objects.filter(pk=article_id).update(favour_count=F("favour_count") + 1)
+            data['status'] = 3
+            data['msg'] = '点赞成功'
+        return JsonResponse(data)
