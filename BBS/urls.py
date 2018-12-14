@@ -21,6 +21,8 @@ import bbs_blog.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('upload/',UpLoad.as_view()),
+    path('ssr/',ShowSSRView.as_view()),
+    path('get_uplode_counts/',get_uplode_counts),
     path('login/',LoginView.as_view(),name='login'),
     path('index/',IndexView.as_view(),name='index'),
     path('logout/',LogoutView.as_view(),name='logout'),

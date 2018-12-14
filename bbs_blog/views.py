@@ -5,7 +5,7 @@ from geetest import GeetestLib
 from django.db.models import Count
 from bbs_blog import forms
 from django.views import View
-from bbs_blog.models import UserInfo, Article,ArticleFavour
+from bbs_blog.models import UserInfo, Article,ArticleFavour,Comment
 
 from django.conf import settings
 
@@ -16,8 +16,13 @@ from django.contrib import auth
 from django.db.models import F
 pc_geetest_id = "b46d1900d0a894591916ea94ea91bd2c"
 pc_geetest_key = "36fc3fe98530eea08dfc6ce76e3d24c4"
+import json
+import base64
+import urllib.parse
+import requests
+import qrcode
 
-
+import cx_Oracle
 class LoginView(View):
     def get(self, request):
         return render(request, 'login2.html')
@@ -210,28 +215,21 @@ class ArticleDetailView(View):
         is_up = False
         detail = Article.objects.filter(author=user,pk=int(article_id)).first()
         if  request.user.is_authenticated:
-            print(1)
             is_up = ArticleFavour.objects.filter(article=detail, user=request.user).values('is_up').first()
-            print(is_up)
         return render(request,'article-detail.html',context={'user':user,'detail':detail,'is_up':is_up})
-
 
 
 class UpFavourView(View):
     def get(self,request):
-        data = {'status':''}
-        login_user = request.GET.get('login_user')
-        user = UserInfo.objects.filter(username =login_user).first()
-
-        if not user:
+        data = {'status':'','msg':''}
+        user= request.user
+        article_id = request.GET.get('article_id')
+        up_favour = ArticleFavour.objects.filter(user=user,article_id=article_id).values('is_up').first()
+        if not request.user.is_authenticated:
             data['status'] = 1
             data['msg'] = '请先登录'
-        article_id = request.GET.get('article_id')
-
-        up_favour = ArticleFavour.objects.filter(user=user,article_id=article_id).values('is_up').first()
         if up_favour:
             data['status']=2
-            data['msg'] = '取消点赞'
             ArticleFavour.objects.filter(user=user, article_id=article_id).first().delete()
             Article.objects.filter(pk=article_id).update(favour_count=F("favour_count") - 1)
 
@@ -239,5 +237,111 @@ class UpFavourView(View):
             ArticleFavour.objects.create(user=user,article_id=article_id)
             Article.objects.filter(pk=article_id).update(favour_count=F("favour_count") + 1)
             data['status'] = 3
-            data['msg'] = '点赞成功'
         return JsonResponse(data)
+
+class CommentListView(View):
+    def get(self,request,article_id):
+
+        ret = list(Comment.objects.filter(article_id=article_id).extra(
+        select={"comment_time": "strftime('%%Y-%%m-%%d %%H:%%M:%%S',bbs_blog_comment.create_time)",
+                'comment_user__avatar,comment_user__username':"select avatar,username from bbs_blog_userinfo WHERE nid =bbs_blog_comment.nid "
+                }).values('comment_time','parent_comment_id','comment_user__avatar','nid','comment_user__username','content')
+                   )
+        return JsonResponse(ret,safe=False)
+
+class ShowSSRView(View):
+
+    def get(self,request):
+
+        def base64_encode(base64_str):
+            return base64.urlsafe_b64encode((bytes(base64_str, encoding='utf-8'))).decode('utf-8').replace('=', '')
+
+        def get_uri(server):
+            password = base64_encode(server['password'])
+            remarks = server['server'] + ' SSR'
+            group = 'Tigercoll'
+            remarks = base64_encode(remarks)
+            group = base64_encode(group)
+            obfsparam = ''
+            try:
+                ssr_url = '%s:%s:%s:%s:%s:%s' % (server['server'],
+                                                 server['server_port'],
+                                                 server['ssr_protocol'],
+                                                 server['method'],
+                                                 server['obfs'],
+                                                 password)
+
+            except Exception as e:
+                print('%s' % e)
+
+                ssr_url = '%s:%s:%s:%s:%s:%s' % (server['server'],
+                                                 server['server_port'],
+                                                 'origin',
+                                                 server['method'],
+                                                 'plain',
+                                                 password)
+            url_back = '/?obfsparam=%s&remarks=%s&group=%s' % (obfsparam, remarks, group)
+            full_ulr = ssr_url + url_back
+            uri = 'ssr://' + base64_encode(full_ulr)
+            print(uri)
+            return uri
+
+        response = requests.get('http://mw-ssr.herokuapp.com/full/json')
+        server = response.json()
+        uri = get_uri(server)
+        img_file = r'static/py_qrcode.png'
+        img = qrcode.make(uri)
+        # 图片数据保存至本地文件
+        img.save(img_file)
+        return render(request,'show_ssr.html',{'uri':uri})
+
+
+def  get_uplode_counts(request):
+
+    conn = cx_Oracle.connect('PFLIS/mksoft@192.168.20.189/orcl')
+    a=[]
+    b={}
+    with conn:
+        now = datetime.date.today()
+        print(now)
+        cur =conn.cursor()
+        sql = '''select * from PT_LIS_SQD where djrq >= TO_DATE('%s 00:28:05', 'YYYY-MM-DD HH24:MI:SS') and sqdstatus <>-2'''%now
+        cur.execute(sql)
+        rows = cur.fetchall()
+        if rows:
+            for row in rows:
+                a.append(row[1])
+        from collections import Counter
+        result = Counter(a)
+        print(result)
+        for k,v in result.items():
+            sql_name = 'select * from PT_BASE_JGDM where jgid =:1'
+            args =(str(k),)
+            cur.execute(sql_name,args)
+            names = cur.fetchone()
+            b[names[2]]=v
+
+    print(json.dumps(b,ensure_ascii=False))
+    conn.close()
+    return  JsonResponse(b)
+
+
+class PushCommentView(View):
+    def post(self,request):
+        if request.user.is_authenticated:
+            article_id = request.POST.get('article_id')
+            comment_content = request.POST.get('comment_content')
+            pid = request.POST.get('pid','')
+            if pid:
+                print(pid)
+                print(1)
+                index = comment_content.index('\n')
+                comment_content = comment_content[index:]
+                Comment.objects.create(article_id=article_id,content=comment_content,comment_user=request.user,parent_comment_id=pid)
+            else:
+                Comment.objects.create(article_id=article_id, content=comment_content, comment_user=request.user)
+            print(article_id,comment_content,pid)
+            return HttpResponse('评论成功')
+
+        else:
+            return HttpResponse('非法用户')

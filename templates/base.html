@@ -19,9 +19,9 @@
 </head>
 <body>
 {#导航条开始#}
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top ">
     <div class="container">
-        <div class="navbar-header">
+        <div class="navbar-header ">
 
             <a class="navbar-brand" href={% url  "index" %}>
                 {% if user.nick_name %}
@@ -63,7 +63,7 @@
 <div class="container article-content">
     <div class="row ">
 
-        <div class="col-md-3  ">
+        <div class="col-md-3 col ">
 
           {% include 'left-tag.html' %}
         </div>

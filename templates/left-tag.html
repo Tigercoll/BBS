@@ -24,7 +24,7 @@
     <div class="panel-body">
         {% get_archive_list user as archive_list %}
         {% for archive in archive_list %}
-            <div><a href="/blog/xiaohei/{{ archive.0.year  }}/{{ archive.0.month }}/">{{ archive.0.year }}年{{ archive.0.month }}月（{{ archive.1 }}）</a></div>
+            <div><a href="/blog/{{ user.username }}/{{ archive.0.year  }}/{{ archive.0.month }}/">{{ archive.0.year }}年{{ archive.0.month }}月（{{ archive.1 }}）</a></div>
         {% endfor %}
     </div>
 </div>

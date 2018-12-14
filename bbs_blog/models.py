@@ -130,7 +130,7 @@ class Comment(models.Model):
     comment_user = models.ForeignKey(to="UserInfo", to_field="nid",on_delete=models.CASCADE)
     content = models.CharField(max_length=255,verbose_name='评论内容')  # 评论内容
     create_time = models.DateTimeField(auto_now_add=True)
-    parent_comment = models.ForeignKey("self", blank=True,on_delete=models.CASCADE)  # blank=True 在django admin里面可以不填
+    parent_comment = models.ForeignKey("self", null=True,blank=True,on_delete=models.CASCADE)  # blank=True 在django admin里面可以不填
 
     def __str__(self):
         return self.content
@@ -138,3 +138,4 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "评论"
         verbose_name_plural = verbose_name
+        ordering = ['create_time']

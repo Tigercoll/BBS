@@ -68,3 +68,15 @@
 .article-title{
     font-size: 20px;
 }
+
+.head-img img{
+    height: 64px;
+}
+
+#input-content{
+    width: 100%;
+}
+
+.comment-list{
+    padding-top: 20px;
+}

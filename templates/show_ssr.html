@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <script type="text/javascript" src="/static/jquery-3.3.1.js"></script>
+
+</head>
+<body>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+      <div class="page-header">
+        <h1>SSR地址,每次请求随即更新</h1>
+      </div>
+            <div><textarea name="ssr_content" id="" cols="60" rows="5">{{ uri }}</textarea></div>
+            <div><button class="btn btn-info copy-uri" style="display:block;margin-left: 20%">一键复制URI</button></div>
+             <h1>SSR二维码</h1>
+            <p><img   style="width: 400px;height: 400px" src="/static/py_qrcode.png" alt=""></p>
+    </div>
+        </div>
+</div>
+
+<script>
+    $('.copy-uri').click(function () {
+        var $uri_content=$('[name="ssr_content"]');
+        $uri_content.select();
+        document.execCommand("Copy");
+        $uri_content.blur();
+        alert('URI复制成功')
+    })
+</script>
+</body>
+</html>
