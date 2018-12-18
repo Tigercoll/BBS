@@ -1,0 +1,30 @@
+
+{% load left_tags %}
+<div class="panel panel-primary ">
+    <div class="panel-heading">博客分类</div>
+    <div class="panel-body">
+        {% get_category_list user as category_list %}
+        {% for category in category_list %}
+            <div><a> {{ category.category__name }}({{ category.count }})</a></div>
+        {% endfor %}
+
+    </div>
+</div>
+<div class="panel panel-info ">
+    <div class="panel-heading">博客标签</div>
+    <div class="panel-body">
+        {% get_tag_list user as  tag_list %}
+        {% for tag in tag_list %}
+            <div><a> {{ tag.tag__name }}({{ tag.count }})</a></div>
+        {% endfor %}
+    </div>
+</div>
+<div class="panel panel-danger ">
+    <div class="panel-heading">博客归档</div>
+    <div class="panel-body">
+        {% get_archive_list user as archive_list %}
+        {% for archive in archive_list %}
+            <div><a href="/blog/{{ user.username }}/{{ archive.0.year  }}/{{ archive.0.month }}/">{{ archive.0.year }}年{{ archive.0.month }}月（{{ archive.1 }}）</a></div>
+        {% endfor %}
+    </div>
+</div>

@@ -2,45 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>登录</title>
+    <title>注册</title>
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/mystyle.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+
 
 </head>
 <body>
+{#导航栏开始#}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
 
+            <a class="navbar-brand" href={% url  "index" %}>Tigercoll</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse pull-right">
+            <ul class="nav navbar-nav">
+                <li class=""><a href={% url  "index" %}><i class="fa fa-home"></i> 首页</a>
+                <li><a href={% url 'login' %}><i class="fa fa-user"></i> 登录</a></li>
+                <li><a href={% url 'register' %}><i class="fa fa-user-plus"></i> 注册</a></li>
+                <li><a href="#"><i class="fa fa-question-circle-o"></i> 帮助</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+{#导航栏结束#}
 <div class="container">
-    <div class="row">
-        <form class="form-horizontal col-md-6 col-md-offset-3 login-form" action={% url 'login' %} method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username" class="col-sm-2 control-label">用户名</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="password" class="col-sm-2 control-label">密码</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="密码">
-                </div>
-            </div>
+    <div class="my-content">
+        <div class="row">
+            <div class="col-md-6 col-lg-offset-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-left">登录</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" action="/login/" method="post" class="form-horizontal reg-form">
+                            {% csrf_token %}
 
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default" id="login-button">登录</button>
-                    <span class="login-error">{{ msg }}</span>
+
+                            <div class="form-group">
+                                <label for="login_name" class="col-sm-2 control-label">登录名称:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="login_name" name="login_name"
+                                           placeholder="登录用户名，不少于4个字符">
+                                    <span id="login_name_error" class="help-block pull-right hide">登录名称不能为空</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="col-sm-2 control-label">密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:</label>
+                                <div class="col-sm-8">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           placeholder="至少8位，必须包含字母、数字、特殊字符">
+                                    <span id="password_error" class="help-block pull-right hide">密码不能为空</span>
+                                </div>
+                            </div>
+                               <div class="col-sm-offset-2 col-sm-4">
+                            <div class="my-checkbox">
+                                    <input type="checkbox" id="remember" value="1">记住密码
+                            </div>
+                               </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-8">
+                                    <button id="login-button" type="button" class="btn btn-info btn-block">登录</button>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-4">
+                                    <a id="login_lost_btn" >忘记密码?</a>
+                                </div>
+                                <div class="col-sm-offset-2 col-sm-2 text-right">
+                                <a id="login_register_btn" href="/register/">立即注册</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
+<script type="text/javascript" src="/static/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/setupajax.js"></script>
 
+<script>
+   $formInputEle = $("form input");
+    {#当失去焦点时检查input框里的内容是否为空#}
+    $formInputEle.blur(function () {
+        $(this).each(function () {
+            if ($(this).val()){
+            }
+            else{
+                $(this).next().removeClass("hide");
+                $(this).parent().parent().addClass('has-error')
+            }
+        })
+    });
+    {#当获取焦点时清除提示信息#}
+    $formInputEle.focus(function () {
+        $(this).each(function () {
+            if ($(this).val()){
 
+            }
+            else{
+                $(this).next().addClass("hide");
+                $(this).parent().parent().removeClass('has-error')
+            }
+        })
+    });
 
-<script src="/static/jquery-3.3.1.js"></script>
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    $("#login-button").click(function () {
+        var login_name = $('#login_name').val();
+        var password = $('#password').val();
+        var remember = $('#remember').is(':checked');
+        console.log(remember);
+        $.ajax({
+            url:'/login/',
+            type:'post',
+            data:{
+                "login_name":login_name,
+                "password":password,
+                'remember':remember
+            },
+            success:function (callback) {
+                if(callback.status){
+                    $('#password_error').text(callback.error).removeClass('hide')
+                }
+                else {
+                    window.location.href = callback.url
+                }
+            }
+        })
+    })
+</script>
 </body>
 </html>

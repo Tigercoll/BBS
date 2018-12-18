@@ -25,7 +25,7 @@ SECRET_KEY = 'hx2+sl%^$36#3%a$b^()@ay)4b$6*j@@t-^i7wo8hl-4ex3dx!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'UTC'
 
@@ -126,3 +126,6 @@ STATICFILES_DIRS =[os.path.join(BASE_DIR,'static')]
 
 # 告诉django项目用哪张表做认证
 AUTH_USER_MODEL = 'bbs_blog.UserInfo'
+
+# 在浏览器关闭后失效
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True

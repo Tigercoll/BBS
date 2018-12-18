@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% block article_list %}
+    <link rel="stylesheet" href="/static/detailcss.css">
+<div class="article-list">
+{{ detail.articledetail.content | safe }}
+
+</div>
+
+<div class="praise">
+	<span id="praise">
+         {% if is_up %}
+             <img src="/static/img/yizan.png" id="praise-img" class="animation">
+                   {% else %}
+              <img src="/static/img/zan.png" id="praise-img" class="animation">
+         {% endif %}
+
+    </span>
+	<span id="praise-txt" >{{ detail.favour_count }}</span>
+	<span id="add-num" ><em class="add-animation">-1</em></span>
+</div>
+
+    <div class="comment">
+
+     <div class="comment-table">
+     {% if request.user.username %}
+     <div class="row ">
+        <div class="col-sm-1">
+            {% if request.user.username %}
+                <div class=" head-img"><img src="/{{ request.user.avatar }}" alt=""></div>
+            {% else %}
+                <div class=" head-img"><img src="/static/img/default.png" alt=""></div>
+            {% endif %}
+        </div>
+        <div class="col-sm-8">
+            <div class="text-input"><textarea name="" id="input-content" cols="30" rows="3"></textarea></div>
+
+        </div>
+        <div class="col-sm-2">
+            {% csrf_token %}
+            <div class="comment-push"><input class="btn btn-success btn-lg push-comment"  type="button" value="提交评论"></div>
+        </div>
+    </div>
+         {% else %}
+         <span><a href="/login/">请登录</a></span>
+     {% endif %}
+
+
+
+
+     </div>
+        <div class="comment-list">
+
+        </div>
+    </div>
+
+    <script>
+
+	/* @author:Romey
+	 * 动态点赞
+	 * 此效果包含css3，部分浏览器不兼容（如：IE10以下的版本）
+	*/
+	$(function () {
+        $.ajax({
+        url:'/blog/comment_list/'+'{{ detail.pk }}/',
+        success:function (callback) {
+           $.each(callback,function (k,v) {
+               var comment_content='<div class="media">\n' +
+                   '<div class="media-left">\n' +
+                   '<a href="#">\n' +
+                   '<img class="media-object" data-src="holder.js/64x64" alt="64x64" src="/' +
+                   '' +v.comment_user__avatar+
+                   '" data-holder-rendered="true" style="width: 64px; height: 64px;">\n' +
+                   '</a>\n' +
+                   '</div>\n' +
+                   '<div class="media-body" comment_id=' +
+                   '' +v.nid+
+                   '>' +
+                   '<h4 class="media-heading"><span class="comment_username">'+v.comment_user__username + '</span>&nbsp;&nbsp;&nbsp;&nbsp;'
+                    +'<span>'+v.comment_time+'</span>'+'<a class="pull-right btn btn-primary "><span class="reply">回复</span></a>'+
+                   '</h4>\n' +
+                     v.content+
+                   '</div>\n' +
+                   '</div>';
+
+               if(v.parent_comment_id){
+                   pid=v.parent_comment_id;
+                   $("[comment_id="+pid+"]").append(comment_content);
+               }else {
+                   $(".comment-list").append(comment_content);
+               }
+           })
+
+        }
+    });
+    });
+
+
+    
+	$(function(){
+		$("#praise").click(function() {
+            var praise_img = $("#praise-img");
+            var text_box = $("#add-num");
+            var praise_txt = $("#praise-txt");
+            var num = parseInt(praise_txt.text());
+            var user ="{{ request.user.username }}";
+                if(user){
+                    $.ajax(
+                        {
+                            url:'/blog/up_favour/',
+                            type:'get',
+                            data:{
+                                login_user:user,
+                                article_id:'{{ detail.pk }}'
+                            },
+                            success:function (callback) {
+                               if (callback.status===1){
+                                   alert(callback.msg)
+                               }else if (callback.status===2){
+                                   $(praise_img).attr('src','/static/img/zan.png');
+                                   praise_txt.removeClass("hover");
+                                   text_box.show().html("<em class='add-animation'>-1</em>");
+                                   $(".add-animation").removeClass("hover");
+                                   num -=1;
+                                   praise_txt.text(num)
+                               }
+                               else {
+                                    $(praise_img).attr('src','/static/img/yizan.png');
+                                   praise_txt.addClass("hover");
+                                   text_box.show().html("<em class='add-animation'>+1</em>");
+                                   $(".add-animation").addClass("hover");
+                                   num +=1;
+                                   praise_txt.text(num)
+                               }
+                            }
+
+
+
+                        }
+                    )
+
+                }
+                else {
+                    alert('请先登录')
+                }
+		})
+	});
+    var ppid = '';
+	$('.push-comment').click(function () {
+        comment_content=$('#input-content').val();
+        if(comment_content){
+
+          $.ajax({
+              url:'/blog/push_comment/',
+              type:'post',
+              data:{
+                  article_id:{{ detail.pk }},
+                  comment_content:comment_content,
+                  csrfmiddlewaretoken:$('[name="csrfmiddlewaretoken"]').val(),
+                  pid:ppid
+
+              },
+              success:function (callback) {
+                  alert(callback);
+                  window.location.reload();
+                  ppid=''
+              }
+
+
+          })
+        }
+        else {
+            alert('请输入评论内容')
+        }
+    });
+    $(function () {
+        $('.comment-list').on('click','.reply',function () {
+
+            ppid = $(this).parent().parent().parent().attr('comment_id');
+            comment_username = $(this).parent().siblings().first().text();
+            content = '@'+comment_username+'\n';
+            $('#input-content').val(content).focus()
+        });
+
+
+    })
+
+</script>
+{% endblock %}
