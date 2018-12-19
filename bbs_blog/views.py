@@ -343,8 +343,14 @@ class PushCommentView(View):
             else:
                 Comment.objects.create(article_id=article_id, content=comment_content, comment_user=request.user)
             print(article_id,comment_content,pid)
+            Article.objects.filter(pk=article_id).update(comment_count=F("comment_count") + 1)
             return HttpResponse('评论成功')
 
         else:
             return HttpResponse('非法用户')
 
+class ArchiveListView(View):
+    def get(self,request,username,year,month):
+        user = UserInfo.objects.filter(username=username).first()
+        Article.objects.filter(author=user).dates(create_time__year=int(year),create_time__month=int(month))
+        return HttpResponse()

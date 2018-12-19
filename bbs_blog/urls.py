@@ -23,6 +23,8 @@ urlpatterns = [
     path('push_comment/',PushCommentView.as_view()),
     path('comment_list/<article_id>/',CommentListView.as_view()),
     path('<username>/article/<article_id>/',ArticleDetailView.as_view()),
+    path('<username>/archive/<year>/<month>/',ArchiveListView.as_view()),
+
     path('<username>/',HomeView.as_view()),
 
 ]

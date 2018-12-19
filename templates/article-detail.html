@@ -34,9 +34,11 @@
          <button class="btn btn-info" id="push-comment">提交评论 </button>
          </div>
          <script src="/static/detail.js">
+         </script>
+         <script>
          var ppid = '';
 
-    document.getElementById('push-comment').addEventListener('click', function () {
+        document.getElementById('push-comment').addEventListener('click', function () {
         // 读取 html
         comment_content=editor.txt.html();
 
@@ -87,7 +89,8 @@
            $.each(callback,function (k,v) {
                var comment_content='<div class="media">\n' +
                    '<div class="media-left">\n' +
-                   '<a href="#">\n' +
+                   '<a href="/blog/' +v.comment_user__username+
+                   '">\n' +
                    '<img class="media-object img-rounded" data-src="holder.js/64x64" alt="64x64" src="/' +
                    '' +v.comment_user__avatar+
                    '" data-holder-rendered="true" style="width: 64px; height: 64px;">\n' +
@@ -188,14 +191,7 @@
 		})
 	});
 
-    {#$('.push-comment').click(function () {#}
-    {#    #}
-    {#{);#}
-    $(function () {
 
-
-
-    })
 
 </script>
 {% endblock %}
