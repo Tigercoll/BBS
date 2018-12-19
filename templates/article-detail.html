@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block article_list %}
+    <script src="/static/wangEditor.min.js"></script>
     <link rel="stylesheet" href="/static/detailcss.css">
 <div class="article-list">
 {{ detail.articledetail.content | safe }}
@@ -23,43 +24,63 @@
 
      <div class="comment-table">
      {% if request.user.username %}
-     <div class="row ">
-        <div class="col-sm-1">
-            {% if request.user.username %}
-                <div class=" head-img"><img src="/{{ request.user.avatar }}" alt=""></div>
-            {% else %}
-                <div class=" head-img"><img src="/static/img/default.png" alt=""></div>
-            {% endif %}
-        </div>
-        <div class="col-sm-8">
-            <div class="text-input"><textarea name="" id="input-content" cols="30" rows="3"></textarea></div>
+         <div>
+         <div class="userinfo">
+             <div><img class="img-rounded" src="/{{ request.user.avatar }}" alt="">&nbsp;&nbsp;&nbsp;&nbsp;<span class="username">{{ request.user.username }}</span></div>
+         </div>
+         <div class="edit-input" id="editor">
 
-        </div>
-        <div class="col-sm-2">
-            {% csrf_token %}
-            <div class="comment-push"><input class="btn btn-success btn-lg push-comment"  type="button" value="提交评论"></div>
-        </div>
-    </div>
+         </div>
+         <button class="btn btn-info" id="push-comment">提交评论 </button>
+         </div>
+         <script src="/static/detail.js">
+         var ppid = '';
+
+    document.getElementById('push-comment').addEventListener('click', function () {
+        // 读取 html
+        comment_content=editor.txt.html();
+
+        if(comment_content){
+
+          $.ajax({
+              url:'/blog/push_comment/',
+              type:'post',
+              data:{
+                  article_id:{{ detail.pk }},
+                  comment_content:comment_content,
+                  csrfmiddlewaretoken:$('[name="csrfmiddlewaretoken"]').val(),
+                  pid:ppid
+
+              },
+              success:function (callback) {
+                  alert(callback);
+                  window.location.reload();
+                  ppid=''
+              }
+
+
+          })
+        }
+        else {
+            alert('请输入评论内容')
+        }
+    }, false);
+         </script>
          {% else %}
-         <span><a href="/login/">请登录</a></span>
+         <div><h3>评论请先点击登录按钮:</h3><a class="btn btn-info btn-block" href="/login/" role="button">登录</a>
+         </div>
      {% endif %}
 
 
 
 
      </div>
-        <div class="comment-list">
+        <div class="comment-list" id="comment-list">
 
         </div>
     </div>
-
     <script>
-
-	/* @author:Romey
-	 * 动态点赞
-	 * 此效果包含css3，部分浏览器不兼容（如：IE10以下的版本）
-	*/
-	$(function () {
+    $(function () {
         $.ajax({
         url:'/blog/comment_list/'+'{{ detail.pk }}/',
         success:function (callback) {
@@ -67,7 +88,7 @@
                var comment_content='<div class="media">\n' +
                    '<div class="media-left">\n' +
                    '<a href="#">\n' +
-                   '<img class="media-object" data-src="holder.js/64x64" alt="64x64" src="/' +
+                   '<img class="media-object img-rounded" data-src="holder.js/64x64" alt="64x64" src="/' +
                    '' +v.comment_user__avatar+
                    '" data-holder-rendered="true" style="width: 64px; height: 64px;">\n' +
                    '</a>\n' +
@@ -93,9 +114,31 @@
         }
     });
     });
+    </script>
+
+    <script>
+
+	/* @author:Romey
+	 * 动态点赞
+	 * 此效果包含css3，部分浏览器不兼容（如：IE10以下的版本）
+	*/
 
 
-    
+    $('.comment-list').on('click','.reply',function () {
+            if("{{ request.user.is_authenticated }}"==="True"){
+                 ppid = $(this).parent().parent().parent().attr('comment_id');
+            comment_username = $(this).parent().siblings().first().text();
+            content = '@'+comment_username+'\n';
+            editor.txt.html(content)
+            }
+           else {
+                alert('请先登录')
+            }
+        });
+
+
+
+
 	$(function(){
 		$("#praise").click(function() {
             var praise_img = $("#praise-img");
@@ -144,42 +187,12 @@
                 }
 		})
 	});
-    var ppid = '';
-	$('.push-comment').click(function () {
-        comment_content=$('#input-content').val();
-        if(comment_content){
 
-          $.ajax({
-              url:'/blog/push_comment/',
-              type:'post',
-              data:{
-                  article_id:{{ detail.pk }},
-                  comment_content:comment_content,
-                  csrfmiddlewaretoken:$('[name="csrfmiddlewaretoken"]').val(),
-                  pid:ppid
-
-              },
-              success:function (callback) {
-                  alert(callback);
-                  window.location.reload();
-                  ppid=''
-              }
-
-
-          })
-        }
-        else {
-            alert('请输入评论内容')
-        }
-    });
+    {#$('.push-comment').click(function () {#}
+    {#    #}
+    {#{);#}
     $(function () {
-        $('.comment-list').on('click','.reply',function () {
 
-            ppid = $(this).parent().parent().parent().attr('comment_id');
-            comment_username = $(this).parent().siblings().first().text();
-            content = '@'+comment_username+'\n';
-            $('#input-content').val(content).focus()
-        });
 
 
     })

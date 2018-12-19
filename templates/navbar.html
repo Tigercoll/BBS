@@ -1,0 +1,37 @@
+{#导航条开始#}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            {% if user.username %}
+                <a class="navbar-brand" href="/blog/{{ user.username }}">
+                    {% if user.nick_name %}
+                    {{ user.nick_name }}
+                        {% else %}
+                        {{ user.username }}
+                    {% endif %}
+
+                    的博客</a>
+            {% else %}
+                 <a class="navbar-brand" href={% url  "index" %}>Tigercoll的博客论坛</a>
+            {% endif %}
+
+        </div>
+        <div id="navbar" class="navbar-collapse collapse pull-right">
+            <ul class="nav navbar-nav">
+                <li class=""><a href={% url  "index" %}><i class="fa fa-home"></i> 首页</a>
+                {% if request.user.username %}
+                   <li><a href="#">{{ request.user.username }}</a></li>
+                   <li><a href="/blog/{{ request.user.username }}/">我的博客</a></li>
+                   <li><a href="/logout/">退出</a></li>
+
+                    {% else %}
+                <li><a href={% url 'login' %}><i class="fa fa-user"></i> 登录</a></li>
+                <li><a href={% url 'register' %}><i class="fa fa-user-plus"></i> 注册</a></li>
+                {% endif %}
+
+                <li><a href="#"><i class="fa fa-question-circle-o"></i> 帮助</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+{#导航条结束#}

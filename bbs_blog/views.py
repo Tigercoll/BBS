@@ -192,6 +192,7 @@ class UpLoad(View):
 class HomeView(View):
     def get(self, request, username):
         print(username)
+
         user = UserInfo.objects.filter(username=username).first()
         if not user:
             return HttpResponse('ok')
@@ -333,11 +334,12 @@ class PushCommentView(View):
             comment_content = request.POST.get('comment_content')
             pid = request.POST.get('pid','')
             if pid:
-                print(pid)
-                print(1)
-                index = comment_content.index('\n')
-                comment_content = comment_content[index:]
-                Comment.objects.create(article_id=article_id,content=comment_content,comment_user=request.user,parent_comment_id=pid)
+                try:
+                    index = comment_content.index('\n')
+                    comment_content = comment_content[index:]
+                    Comment.objects.create(article_id=article_id,content=comment_content,comment_user=request.user,parent_comment_id=pid)
+                except Exception as e:
+                    Comment.objects.create(article_id=article_id, content=comment_content, comment_user=request.user)
             else:
                 Comment.objects.create(article_id=article_id, content=comment_content, comment_user=request.user)
             print(article_id,comment_content,pid)
@@ -345,3 +347,4 @@ class PushCommentView(View):
 
         else:
             return HttpResponse('非法用户')
+
