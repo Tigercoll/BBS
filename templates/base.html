@@ -23,7 +23,7 @@
     <div class="container">
         <div class="navbar-header ">
 
-            <a class="navbar-brand" href={% url  "index" %}>
+            <a class="navbar-brand" href='/blog/{{ user.username }}'>
                 {% if user.nick_name %}
                     {{ user.nick_name }}
                 {% else %}

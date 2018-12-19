@@ -257,3 +257,12 @@
 }
 /*点赞数量加减动画结束*/
 /*动态点赞结束*/
+
+/*评论*/
+.comment-list{
+    padding-top: 40px;
+}
+.username{
+    color: #698e22;
+    font-size: 20px;
+}
